@@ -24,10 +24,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-zk!^2f64dosatmiy0)0z9(1x1!t%_4u+pn8i2^5g8i^gr$3)b7')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+# Railway Environment Detection
+RAILWAY_ENVIRONMENT = config('RAILWAY_ENVIRONMENT_NAME', default=None)
+IS_PRODUCTION = RAILWAY_ENVIRONMENT == 'production'
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = config('DEBUG', default=not IS_PRODUCTION, cast=bool)
+
+# Production hosts for Railway
+if IS_PRODUCTION:
+    ALLOWED_HOSTS = ['*.railway.app']
+else:
+    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
 
 
 # Application definition
@@ -55,11 +63,21 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CORS_ALLOWED_ORIGINS = config(
-    'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:3000',
-    cast=lambda v: [s.strip() for s in v.split(',')]
-)
+# CORS Configuration for microservice
+if IS_PRODUCTION:
+    CORS_ALLOWED_ORIGINS = config(
+        'CORS_ALLOWED_ORIGINS',
+        default='https://*.railway.app',
+        cast=lambda v: [s.strip() for s in v.split(',')]
+    )
+    CORS_ALLOW_ALL_ORIGINS = False
+else:
+    CORS_ALLOWED_ORIGINS = config(
+        'CORS_ALLOWED_ORIGINS',
+        default='http://localhost:3000',
+        cast=lambda v: [s.strip() for s in v.split(',')]
+    )
+    CORS_ALLOW_ALL_ORIGINS = True
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
@@ -97,10 +115,21 @@ DATABASES = {
     }
 }
 
-# Railway PostgreSQL Database URL
+# Database Configuration for Railway Microservice
 if config('DATABASE_URL', default=None):
     import dj_database_url
-    DATABASES['default'] = dj_database_url.parse(config('DATABASE_URL'))
+    DATABASES['default'] = dj_database_url.parse(
+        config('DATABASE_URL'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+    # Optimize for microservice
+    DATABASES['default'].update({
+        'OPTIONS': {
+            'MAX_CONNS': 20,
+            'MIN_CONNS': 5,
+        }
+    })
 
 
 # Password validation
@@ -139,6 +168,39 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Microservice Configuration
+MICROSERVICE_NAME = "posts-api"
+MICROSERVICE_VERSION = "1.0.0"
+
+# Health check endpoint
+HEALTH_CHECK_URL = "/health/"
+
+# API Configuration
+API_VERSION = "v1"
+API_TITLE = "Posts Microservice"
+
+# Logging for microservice
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'microservice': {
+            'format': '{levelname} {asctime} [{name}] {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'microservice',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO' if IS_PRODUCTION else 'DEBUG',
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
