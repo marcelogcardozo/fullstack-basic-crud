@@ -63,7 +63,7 @@ const Comments = ({ comments, onAddComment, onDeleteComment, postId, currentUser
                 <div className="comment-header">
                   <div className="comment-info">
                     <span className="comment-author">@{comment.username}</span>
-                    <span className="comment-time">{formatTime(new Date(comment.createdAt))}</span>
+                    <span className="comment-time">{formatTime(new Date(comment.created_datetime || comment.createdAt))}</span>
                   </div>
                   {comment.username === currentUser && (
                     <button 

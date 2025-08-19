@@ -46,7 +46,7 @@ const PostItem = ({ post, currentUser, onDelete, onEdit, onLike, onAddComment, o
       
       <div className="post-meta">
         <span className="post-author">@{post.username}</span>
-        <span className="post-time">{formatTime(post.createdAt)}</span>
+        <span className="post-time">{formatTime(new Date(post.created_datetime || post.createdAt))}</span>
       </div>
       
       <div className="post-content">

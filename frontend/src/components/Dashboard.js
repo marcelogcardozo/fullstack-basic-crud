@@ -75,7 +75,7 @@ const Dashboard = ({ username, onLogout }) => {
         id: Date.now(),
         ...newPost,
         username,
-        created_at: new Date().toISOString(),
+        created_datetime: new Date().toISOString(),
         likes: [],
         likesCount: 0,
         comments: [],
@@ -150,7 +150,7 @@ const Dashboard = ({ username, onLogout }) => {
           id: Date.now(),
           text: commentText,
           username,
-          createdAt: new Date()
+          created_datetime: new Date().toISOString()
         };
         const newComments = [...post.comments, newComment];
         
