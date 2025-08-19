@@ -1,0 +1,12 @@
+.mention-highlight {
+  color: #7695EC;
+  font-weight: 600;
+  background-color: rgba(118, 149, 236, 0.1);
+  padding: 1px 4px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.mention-highlight:hover {
+  background-color: rgba(118, 149, 236, 0.2);
+}

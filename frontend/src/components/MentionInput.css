@@ -1,0 +1,40 @@
+.mention-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.mention-suggestions {
+  position: fixed;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-height: 200px;
+  min-width: 200px;
+  overflow-y: auto;
+  z-index: 9999;
+}
+
+.mention-suggestion {
+  padding: 4px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.mention-suggestion:last-child {
+  border-bottom: none;
+}
+
+.mention-suggestion:hover,
+.mention-suggestion.selected {
+  background-color: #7695EC;
+  color: white;
+}
+
+.mention {
+  color: #7695EC;
+  font-weight: 600;
+  background-color: rgba(118, 149, 236, 0.1);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
