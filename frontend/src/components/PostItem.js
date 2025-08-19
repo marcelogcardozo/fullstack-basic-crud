@@ -3,9 +3,10 @@ import Comments from './Comments';
 import MentionText from './MentionText';
 import './PostItem.css';
 
-const PostItem = ({ post, currentUser, onDelete, onEdit, onAddComment, onDeleteComment, allUsers = [] }) => {
+const PostItem = ({ post, currentUser, onDelete, onEdit, onLike, onAddComment, onDeleteComment, allUsers = [] }) => {
   const isOwner = post.username === currentUser;
-    
+  const hasLiked = post.likes && post.likes.includes(currentUser);
+  
   const formatTime = (date) => {
     const now = new Date();
     const diff = Math.floor((now - date) / (1000 * 60));
@@ -52,7 +53,15 @@ const PostItem = ({ post, currentUser, onDelete, onEdit, onAddComment, onDeleteC
         <MentionText text={post.content} />
       </div>
       
-      
+      <div className="post-footer">
+        <button 
+          className={`like-button ${hasLiked ? 'liked' : ''}`}
+          onClick={() => onLike(post.id)}
+          title={hasLiked ? 'Unlike' : 'Like'}
+        >
+          {hasLiked ? '❤️' : '🤍'} {post.likesCount || 0}
+        </button>
+      </div>
 
       <Comments 
         comments={post.comments || []}
