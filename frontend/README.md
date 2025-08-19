@@ -1,70 +1,130 @@
-# Getting Started with Create React App
+# CodeLeap Network - Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Uma aplicação React moderna para criar e compartilhar posts com sistema completo de interações sociais.
 
-## Available Scripts
+## 📋 Visão Geral
 
-In the project directory, you can run:
+O CodeLeap Network é uma plataforma social onde usuários podem criar posts, interagir através de likes e comentários, e mencionar outros usuários. A aplicação oferece uma experiência rica e moderna similar às principais redes sociais.
+
+## ✨ Funcionalidades
+
+### 🔐 Autenticação
+- **Login simples**: Sistema de autenticação baseado em username
+- **Persistência de sessão**: Mantém usuário logado entre sessões
+- **Roteamento protegido**: Acesso restrito às áreas autenticadas
+
+### 📝 Gestão de Posts
+- **Criar posts**: Interface intuitiva com título e conteúdo
+- **Editar posts**: Edição completa de posts próprios
+- **Deletar posts**: Remoção com modal de confirmação
+- **Visualização**: Layout responsivo e organizado
+
+### 💬 Sistema de Comentários
+- **Adicionar comentários**: Interface simples e direta
+- **Deletar comentários**: Remoção de comentários próprios
+- **Expandir/Recolher**: Toggle para visualização dos comentários
+- **Contador dinâmico**: Mostra quantidade de comentários
+
+### 🔗 Sistema de Menções
+- **Autocomplete inteligente**: Digite @ + nome para mencionar usuários
+- **Navegação por teclado**: Use setas ↑/↓ e Enter para selecionar
+- **Destaque visual**: Menções aparecem destacadas em azul
+- **Floating dropdown**: Sugestões não são limitadas por containers
+
+### ❤️ Sistema de Likes
+- **Like/Unlike**: Clique no coração para curtir posts
+- **Contador em tempo real**: Mostra total de likes
+- **Controle de duplicatas**: Um like por usuário
+- **Estado visual**: Coração vermelho quando curtido
+
+### 🎨 Interface e UX
+- **Design responsivo**: Funciona em desktop e mobile
+- **Tema moderno**: Interface limpa e profissional
+- **Feedback visual**: Hover effects e transições suaves
+- **Acessibilidade**: Títulos e labels apropriados
+
+## 🚀 Instalação e Execução
+
+### Pré-requisitos
+- Node.js 16+ 
+- npm ou yarn
+
+### Instalação
+```bash
+# Clone o repositório
+cd frontend
+
+# Instale as dependências
+npm install
+
+# Execute em modo de desenvolvimento
+npm start
+```
+
+A aplicação estará disponível em [http://localhost:3000](http://localhost:3000)
+
+## 🗂️ Estrutura do Projeto
+
+```
+src/
+├── components/           # Componentes React reutilizáveis
+│   ├── Dashboard.js     # Tela principal da aplicação
+│   ├── Login.js         # Tela de autenticação
+│   ├── PostForm.js      # Formulário para criar posts
+│   ├── PostList.js      # Lista de posts
+│   ├── PostItem.js      # Item individual de post
+│   ├── Comments.js      # Sistema de comentários
+│   ├── MentionInput.js  # Input com autocomplete de menções
+│   ├── MentionText.js   # Componente para exibir texto com menções
+│   ├── DeleteModal.js   # Modal de confirmação de delete
+│   ├── EditModal.js     # Modal de edição de posts
+│   └── *.css           # Estilos dos componentes
+├── App.js              # Componente principal e roteamento
+├── App.css             # Estilos globais
+└── index.js            # Ponto de entrada da aplicação
+```
+
+## 📦 Dependências Principais
+
+- **React 19.1.1**: Biblioteca principal
+- **React Router DOM 7.8.1**: Roteamento SPA
+- **Axios 1.11.0**: Cliente HTTP (preparado para integração com backend)
+
+## 🔧 Scripts Disponíveis
 
 ### `npm start`
+Executa a aplicação em modo de desenvolvimento.\
+Abra [http://localhost:3000](http://localhost:3000) para visualizar no navegador.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 💾 Persistência de Dados
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+A aplicação utiliza **localStorage** para persistir dados entre sessões:
 
-### `npm test`
+- **Posts**: Todos os posts criados
+- **Comentários**: Comentários de todos os posts
+- **Likes**: Estado dos likes por usuário
+- **Usuário logado**: Informações da sessão ativa
+- **Lista de usuários**: Para autocomplete de menções
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🎯 Como Usar
 
-### `npm run build`
+### 1. **Login**
+- Digite seu username na tela inicial
+- O sistema criará automaticamente uma conta
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 2. **Criando Posts**
+- Use o formulário "What's on your mind?"
+- Preencha título e conteúdo
+- Clique em "Create"
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 3. **Interagindo com Posts**
+- **Curtir**: Clique no ❤️ para like/unlike
+- **Comentar**: Clique em "💬 X comments" para expandir
+- **Mencionar**: Digite @ + nome do usuário nos comentários
+- **Editar/Deletar**: Use os botões 🗑️ e ✏️ em posts próprios
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### 4. **Sistema de Menções**
+- Digite `@` seguido do nome
+- Use ↑/↓ para navegar nas sugestões
+- Pressione Enter para selecionar
+- As menções aparecerão destacadas
