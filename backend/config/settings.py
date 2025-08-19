@@ -63,21 +63,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# CORS Configuration for microservice
-if IS_PRODUCTION:
-    CORS_ALLOWED_ORIGINS = config(
-        'CORS_ALLOWED_ORIGINS',
-        default='https://*.railway.app',
-        cast=lambda v: [s.strip() for s in v.split(',')]
-    )
-    CORS_ALLOW_ALL_ORIGINS = False
-else:
-    CORS_ALLOWED_ORIGINS = config(
-        'CORS_ALLOWED_ORIGINS',
-        default='http://localhost:3000',
-        cast=lambda v: [s.strip() for s in v.split(',')]
-    )
-    CORS_ALLOW_ALL_ORIGINS = True
+# CORS Configuration - Allow all origins for REST API
+CORS_ALLOW_ALL_ORIGINS = True
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
