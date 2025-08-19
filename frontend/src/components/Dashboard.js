@@ -125,22 +125,31 @@ const Dashboard = ({ username, onLogout }) => {
     setShowEditModal(true);
   };
 
-  const handleLike = (postId) => {
-    setPosts(posts.map(post => {
-      if (post.id === postId) {
-        const hasLiked = post.likes.includes(username);
-        const newLikes = hasLiked 
-          ? post.likes.filter(user => user !== username)
-          : [...post.likes, username];
-        
-        return {
-          ...post,
-          likes: newLikes,
-          likesCount: newLikes.length
-        };
-      }
-      return post;
-    }));
+  const handleLike = async (postId) => {
+    try {
+      const response = await postsAPI.toggleLike(postId, username);
+      setPosts(posts.map(post => 
+        post.id === postId ? response.data : post
+      ));
+    } catch (error) {
+      console.error('Erro ao alterar like:', error);
+      // Fallback para funcionamento local
+      setPosts(posts.map(post => {
+        if (post.id === postId) {
+          const hasLiked = post.likes && post.likes.includes(username);
+          const newLikes = hasLiked 
+            ? post.likes.filter(user => user !== username)
+            : [...(post.likes || []), username];
+          
+          return {
+            ...post,
+            likes: newLikes,
+            likes_count: newLikes.length
+          };
+        }
+        return post;
+      }));
+    }
   };
 
   const handleAddComment = (postId, commentText) => {

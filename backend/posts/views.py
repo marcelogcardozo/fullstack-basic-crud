@@ -55,3 +55,28 @@ def post_detail(request, pk):
     elif request.method == "DELETE":
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["POST"])
+def toggle_like(request, pk):
+    """
+    Toggle like/unlike for a post
+    """
+    try:
+        post = Post.objects.get(pk=pk)
+    except Post.DoesNotExist:
+        return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    username = request.data.get('username')
+    if not username:
+        return Response({"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if username in post.likes:
+        post.likes.remove(username)
+    else:
+        post.likes.append(username)
+    
+    post.save()
+    
+    serializer = PostSerializer(post)
+    return Response(serializer.data)

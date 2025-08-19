@@ -24,6 +24,9 @@ export const postsAPI = {
   
   // Deletar post
   deletePost: (id) => api.delete(`/${id}/`),
+  
+  // Toggle like/unlike
+  toggleLike: (id, username) => api.post(`/${id}/like/`, { username }),
 };
 
 export default api;

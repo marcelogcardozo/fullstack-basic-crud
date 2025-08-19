@@ -59,7 +59,7 @@ const PostItem = ({ post, currentUser, onDelete, onEdit, onLike, onAddComment, o
           onClick={() => onLike(post.id)}
           title={hasLiked ? 'Unlike' : 'Like'}
         >
-          {hasLiked ? '❤️' : '🤍'} {post.likesCount || 0}
+          {hasLiked ? '❤️' : '🤍'} {post.likes_count || post.likesCount || 0}
         </button>
       </div>
 
