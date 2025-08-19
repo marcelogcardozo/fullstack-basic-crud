@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import MentionInput from './MentionInput';
 import './PostForm.css';
 
 const PostForm = ({ onSubmit, allUsers = [] }) => {

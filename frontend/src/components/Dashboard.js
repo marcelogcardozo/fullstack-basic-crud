@@ -158,7 +158,7 @@ const Dashboard = ({ username, onLogout }) => {
         username,
         text: commentText
       };
-      const response = await postsAPI.addComment(postId, commentData);
+      await postsAPI.addComment(postId, commentData);
       
       // Reload the posts to get the updated comments
       loadPosts();
