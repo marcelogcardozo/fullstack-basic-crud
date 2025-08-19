@@ -1,0 +1,69 @@
+.post-form-container {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 24px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 334px;
+}
+
+.post-form-container h2 {
+  margin: 0 0 24px 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 400;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 6px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #7695EC;
+}
+
+.form-group textarea {
+  resize: vertical;
+  height: 72px;
+}
+
+.create-button {
+  background-color: #7695EC;
+  color: white;
+  border: none;
+  padding: 6px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  float: right;
+}
+
+.create-button.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.create-button:hover:not(.disabled) {
+  background-color: #5a7bd8;
+}
