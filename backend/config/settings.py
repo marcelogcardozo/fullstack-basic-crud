@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
+
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,21 +23,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-zk!^2f64dosatmiy0)0z9(1x1!t%_4u+pn8i2^5g8i^gr$3)b7')
+SECRET_KEY = config(
+    "SECRET_KEY",
+    default="django-insecure-zk!^2f64dosatmiy0)0z9(1x1!t%_4u+pn8i2^5g8i^gr$3)b7",
+)
 
 # Railway Environment Detection
-RAILWAY_ENVIRONMENT = config('RAILWAY_ENVIRONMENT_NAME', default=None)
-IS_PRODUCTION = RAILWAY_ENVIRONMENT == 'production'
+RAILWAY_ENVIRONMENT = config("RAILWAY_ENVIRONMENT_NAME", default=None)
+IS_PRODUCTION = RAILWAY_ENVIRONMENT == "production"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=not IS_PRODUCTION, cast=bool)
+DEBUG = config("DEBUG", default=not IS_PRODUCTION, cast=bool)
 
 # Production hosts for Railway
-if IS_PRODUCTION:
-    ALLOWED_HOSTS = ['*.railway.app']
-else:
-    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
-
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -103,20 +103,23 @@ DATABASES = {
 }
 
 # Database Configuration for Railway Microservice
-if config('DATABASE_URL', default=None):
+if config("DATABASE_URL", default=None):
     import dj_database_url
-    DATABASES['default'] = dj_database_url.parse(
-        config('DATABASE_URL'),
+
+    DATABASES["default"] = dj_database_url.parse(
+        config("DATABASE_URL"),
         conn_max_age=600,
         conn_health_checks=True,
     )
     # Optimize for microservice
-    DATABASES['default'].update({
-        'OPTIONS': {
-            'MAX_CONNS': 20,
-            'MIN_CONNS': 5,
+    DATABASES["default"].update(
+        {
+            "OPTIONS": {
+                "MAX_CONNS": 20,
+                "MIN_CONNS": 5,
+            }
         }
-    })
+    )
 
 
 # Password validation
@@ -154,7 +157,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Microservice Configuration
 MICROSERVICE_NAME = "posts-api"
@@ -169,23 +172,23 @@ API_TITLE = "Posts Microservice"
 
 # Logging for microservice
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'microservice': {
-            'format': '{levelname} {asctime} [{name}] {message}',
-            'style': '{',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "microservice": {
+            "format": "{levelname} {asctime} [{name}] {message}",
+            "style": "{",
         },
     },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'microservice',
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "microservice",
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO' if IS_PRODUCTION else 'DEBUG',
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO" if IS_PRODUCTION else "DEBUG",
     },
 }
 
