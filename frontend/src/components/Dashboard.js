@@ -3,6 +3,7 @@ import PostForm from './PostForm';
 import PostList from './PostList';
 import DeleteModal from './DeleteModal';
 import EditModal from './EditModal';
+import { postsAPI } from '../services/api';
 import './Dashboard.css';
 
 const Dashboard = ({ username, onLogout }) => {
@@ -13,14 +14,17 @@ const Dashboard = ({ username, onLogout }) => {
   const [allUsers, setAllUsers] = useState(new Set());
 
   useEffect(() => {
-    const savedPosts = localStorage.getItem('codeleap_posts');
-    if (savedPosts) {
-      const parsedPosts = JSON.parse(savedPosts);
-      setPosts(parsedPosts);
+    loadPosts();
+  }, []);
+
+  const loadPosts = async () => {
+    try {
+      const response = await postsAPI.getAllPosts();
+      setPosts(response.data);
       
       // Extract all users from posts and comments
       const users = new Set();
-      parsedPosts.forEach(post => {
+      response.data.forEach(post => {
         users.add(post.username);
         if (post.comments) {
           post.comments.forEach(comment => {
@@ -29,8 +33,16 @@ const Dashboard = ({ username, onLogout }) => {
         }
       });
       setAllUsers(users);
+    } catch (error) {
+      console.error('Erro ao carregar posts:', error);
+      // Fallback para localStorage em caso de erro
+      const savedPosts = localStorage.getItem('codeleap_posts');
+      if (savedPosts) {
+        const parsedPosts = JSON.parse(savedPosts);
+        setPosts(parsedPosts);
+      }
     }
-  }, []);
+  };
 
   useEffect(() => {
     localStorage.setItem('codeleap_posts', JSON.stringify(posts));
@@ -48,30 +60,57 @@ const Dashboard = ({ username, onLogout }) => {
     setAllUsers(users);
   }, [posts]);
 
-  const addPost = (newPost) => {
-    const post = {
-      id: Date.now(),
-      ...newPost,
-      username,
-      createdAt: new Date(),
-      likes: [],
-      likesCount: 0,
-      comments: [],
-      commentsCount: 0
-    };
-    setPosts([post, ...posts]);
+  const addPost = async (newPost) => {
+    try {
+      const postData = {
+        ...newPost,
+        username,
+      };
+      const response = await postsAPI.createPost(postData);
+      setPosts([response.data, ...posts]);
+    } catch (error) {
+      console.error('Erro ao criar post:', error);
+      // Fallback para funcionamento local
+      const post = {
+        id: Date.now(),
+        ...newPost,
+        username,
+        created_at: new Date().toISOString(),
+        likes: [],
+        likesCount: 0,
+        comments: [],
+        commentsCount: 0
+      };
+      setPosts([post, ...posts]);
+    }
   };
 
-  const deletePost = (id) => {
-    setPosts(posts.filter(post => post.id !== id));
+  const deletePost = async (id) => {
+    try {
+      await postsAPI.deletePost(id);
+      setPosts(posts.filter(post => post.id !== id));
+    } catch (error) {
+      console.error('Erro ao deletar post:', error);
+      // Fallback para funcionamento local
+      setPosts(posts.filter(post => post.id !== id));
+    }
     setShowDeleteModal(false);
     setSelectedPost(null);
   };
 
-  const editPost = (updatedPost) => {
-    setPosts(posts.map(post => 
-      post.id === updatedPost.id ? { ...post, ...updatedPost } : post
-    ));
+  const editPost = async (updatedPost) => {
+    try {
+      await postsAPI.updatePost(updatedPost.id, updatedPost);
+      setPosts(posts.map(post => 
+        post.id === updatedPost.id ? { ...post, ...updatedPost } : post
+      ));
+    } catch (error) {
+      console.error('Erro ao editar post:', error);
+      // Fallback para funcionamento local
+      setPosts(posts.map(post => 
+        post.id === updatedPost.id ? { ...post, ...updatedPost } : post
+      ));
+    }
     setShowEditModal(false);
     setSelectedPost(null);
   };
