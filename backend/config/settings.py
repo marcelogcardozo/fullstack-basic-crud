@@ -13,8 +13,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
-from decouple import config
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,17 +21,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config(
+SECRET_KEY = os.environ.get(
     "SECRET_KEY",
-    default="django-insecure-zk!^2f64dosatmiy0)0z9(1x1!t%_4u+pn8i2^5g8i^gr$3)b7",
+    "django-insecure-zk!^2f64dosatmiy0)0z9(1x1!t%_4u+pn8i2^5g8i^gr$3)b7"
 )
 
 # Railway Environment Detection
-RAILWAY_ENVIRONMENT = config("RAILWAY_ENVIRONMENT_NAME", default=None)
+RAILWAY_ENVIRONMENT = os.environ.get("RAILWAY_ENVIRONMENT_NAME")
 IS_PRODUCTION = RAILWAY_ENVIRONMENT == "production"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=not IS_PRODUCTION, cast=bool)
+DEBUG = os.environ.get("DEBUG", str(not IS_PRODUCTION)).lower() in ("true", "1", "yes")
 
 # Production hosts for Railway
 ALLOWED_HOSTS = ["*"]
@@ -103,11 +101,11 @@ DATABASES = {
 }
 
 # Database Configuration for Railway Microservice
-if config("DATABASE_URL", default=None):
+if os.environ.get("DATABASE_URL"):
     import dj_database_url
 
     DATABASES["default"] = dj_database_url.parse(
-        config("DATABASE_URL"),
+        os.environ.get("DATABASE_URL"),
         conn_max_age=600,
         conn_health_checks=True,
     )
