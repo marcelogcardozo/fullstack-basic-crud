@@ -20,7 +20,7 @@ export const postsAPI = {
   getPost: (id) => api.get(`/${id}/`),
   
   // Atualizar post
-  updatePost: (id, postData) => api.put(`/${id}/`, postData),
+  updatePost: (id, postData) => api.patch(`/${id}/`, postData),
   
   // Deletar post
   deletePost: (id) => api.delete(`/${id}/`),
