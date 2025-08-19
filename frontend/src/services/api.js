@@ -27,6 +27,12 @@ export const postsAPI = {
   
   // Toggle like/unlike
   toggleLike: (id, username) => api.post(`/${id}/like/`, { username }),
+  
+  // Adicionar comentário
+  addComment: (id, commentData) => api.post(`/${id}/comments/`, commentData),
+  
+  // Deletar comentário
+  deleteComment: (postId, commentId) => api.delete(`/${postId}/comments/${commentId}/`),
 };
 
 export default api;

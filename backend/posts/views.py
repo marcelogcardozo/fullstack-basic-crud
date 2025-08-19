@@ -2,8 +2,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Post
-from .serializers import PostCreateSerializer, PostSerializer, PostUpdateSerializer
+from .models import Post, Comment
+from .serializers import PostCreateSerializer, PostSerializer, PostUpdateSerializer, CommentCreateSerializer, CommentSerializer
 
 
 @api_view(["GET", "POST"])
@@ -80,3 +80,38 @@ def toggle_like(request, pk):
     
     serializer = PostSerializer(post)
     return Response(serializer.data)
+
+
+@api_view(["POST"])
+def add_comment(request, pk):
+    """
+    Add a comment to a post
+    """
+    try:
+        post = Post.objects.get(pk=pk)
+    except Post.DoesNotExist:
+        return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = CommentCreateSerializer(data=request.data)
+    if serializer.is_valid():
+        comment = serializer.save(post=post)
+        response_serializer = CommentSerializer(comment)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["DELETE"])
+def delete_comment(request, pk, comment_id):
+    """
+    Delete a comment from a post
+    """
+    try:
+        post = Post.objects.get(pk=pk)
+        comment = Comment.objects.get(pk=comment_id, post=post)
+    except Post.DoesNotExist:
+        return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Comment.DoesNotExist:
+        return Response({"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    comment.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)

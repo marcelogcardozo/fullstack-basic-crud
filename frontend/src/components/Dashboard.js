@@ -152,40 +152,62 @@ const Dashboard = ({ username, onLogout }) => {
     }
   };
 
-  const handleAddComment = (postId, commentText) => {
-    setPosts(posts.map(post => {
-      if (post.id === postId) {
-        const newComment = {
-          id: Date.now(),
-          text: commentText,
-          username,
-          created_datetime: new Date().toISOString()
-        };
-        const newComments = [...post.comments, newComment];
-        
-        return {
-          ...post,
-          comments: newComments,
-          commentsCount: newComments.length
-        };
-      }
-      return post;
-    }));
+  const handleAddComment = async (postId, commentText) => {
+    try {
+      const commentData = {
+        username,
+        text: commentText
+      };
+      const response = await postsAPI.addComment(postId, commentData);
+      
+      // Reload the posts to get the updated comments
+      loadPosts();
+    } catch (error) {
+      console.error('Erro ao adicionar comentário:', error);
+      // Fallback para funcionamento local
+      setPosts(posts.map(post => {
+        if (post.id === postId) {
+          const newComment = {
+            id: Date.now(),
+            text: commentText,
+            username,
+            created_datetime: new Date().toISOString()
+          };
+          const newComments = [...(post.comments || []), newComment];
+          
+          return {
+            ...post,
+            comments: newComments,
+            comments_count: newComments.length
+          };
+        }
+        return post;
+      }));
+    }
   };
 
-  const handleDeleteComment = (postId, commentId) => {
-    setPosts(posts.map(post => {
-      if (post.id === postId) {
-        const newComments = post.comments.filter(comment => comment.id !== commentId);
-        
-        return {
-          ...post,
-          comments: newComments,
-          commentsCount: newComments.length
-        };
-      }
-      return post;
-    }));
+  const handleDeleteComment = async (postId, commentId) => {
+    try {
+      await postsAPI.deleteComment(postId, commentId);
+      
+      // Reload the posts to get the updated comments
+      loadPosts();
+    } catch (error) {
+      console.error('Erro ao deletar comentário:', error);
+      // Fallback para funcionamento local
+      setPosts(posts.map(post => {
+        if (post.id === postId) {
+          const newComments = (post.comments || []).filter(comment => comment.id !== commentId);
+          
+          return {
+            ...post,
+            comments: newComments,
+            comments_count: newComments.length
+          };
+        }
+        return post;
+      }));
+    }
   };
 
   return (
