@@ -26,10 +26,6 @@ def health_check(request):
 
 @api_view(["GET", "POST"])
 def crud_test_list(request):
-    """
-    GET: List all posts
-    POST: Create a new post
-    """
     if request.method == "GET":
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
