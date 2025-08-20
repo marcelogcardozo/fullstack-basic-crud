@@ -1,13 +1,31 @@
+from datetime import datetime
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Post, Comment
-from .serializers import PostCreateSerializer, PostSerializer, PostUpdateSerializer, CommentCreateSerializer, CommentSerializer
+from .models import Comment, Post
+from .serializers import (
+    CommentCreateSerializer,
+    CommentSerializer,
+    PostCreateSerializer,
+    PostSerializer,
+    PostUpdateSerializer,
+)
+
+
+@api_view(["GET"])
+def health_check(request):
+    """
+    Health check endpoint - returns active status and current date
+    """
+    return Response(
+        {"active": True, "data_verificacao": datetime.now().strftime("%Y-%m-%d")}
+    )
 
 
 @api_view(["GET", "POST"])
-def post_list_create(request):
+def crud_test_list(request):
     """
     GET: List all posts
     POST: Create a new post
@@ -66,18 +84,20 @@ def toggle_like(request, pk):
         post = Post.objects.get(pk=pk)
     except Post.DoesNotExist:
         return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    username = request.data.get('username')
+
+    username = request.data.get("username")
     if not username:
-        return Response({"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST)
-    
+        return Response(
+            {"error": "Username is required"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
     if username in post.likes:
         post.likes.remove(username)
     else:
         post.likes.append(username)
-    
+
     post.save()
-    
+
     serializer = PostSerializer(post)
     return Response(serializer.data)
 
@@ -91,7 +111,7 @@ def add_comment(request, pk):
         post = Post.objects.get(pk=pk)
     except Post.DoesNotExist:
         return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
-    
+
     serializer = CommentCreateSerializer(data=request.data)
     if serializer.is_valid():
         comment = serializer.save(post=post)
@@ -111,7 +131,9 @@ def delete_comment(request, pk, comment_id):
     except Post.DoesNotExist:
         return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
     except Comment.DoesNotExist:
-        return Response({"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
-    
+        return Response(
+            {"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND
+        )
+
     comment.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
