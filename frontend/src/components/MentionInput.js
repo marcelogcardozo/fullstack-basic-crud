@@ -15,6 +15,7 @@ const MentionInput = ({
   const [mentionStart, setMentionStart] = useState(-1);
   const [selectedSuggestion, setSelectedSuggestion] = useState(0);
   const [suggestionPosition, setSuggestionPosition] = useState({ top: 0, left: 0 });
+  const [invalidMentions, setInvalidMentions] = useState([]);
   const inputRef = useRef(null);
   
   useEffect(() => {
@@ -52,6 +53,10 @@ const MentionInput = ({
     const cursorPos = e.target.selectionStart;
     
     onChange(inputValue);
+    
+    // Check for invalid mentions in real time
+    const invalidMentionsList = validateMentions(inputValue);
+    setInvalidMentions(invalidMentionsList);
 
     // Check for @ mentions
     const textBeforeCursor = inputValue.substring(0, cursorPos);
@@ -103,6 +108,21 @@ const MentionInput = ({
     }, 0);
   };
 
+  const validateMentions = (text) => {
+    const mentionRegex = /@(\w+)/g;
+    const mentions = [...text.matchAll(mentionRegex)];
+    const invalidMentions = [];
+    
+    mentions.forEach(match => {
+      const username = match[1];
+      if (!allUsers.includes(username)) {
+        invalidMentions.push(username);
+      }
+    });
+    
+    return invalidMentions;
+  };
+
   const handleKeyDown = (e) => {
     if (showSuggestions) {
       if (e.key === 'ArrowDown') {
@@ -123,6 +143,14 @@ const MentionInput = ({
       }
     } else if (e.key === 'Enter' && onSubmit) {
       e.preventDefault();
+      
+      // Validate mentions before submitting
+      const invalidMentions = validateMentions(value);
+      if (invalidMentions.length > 0) {
+        alert(`Usuário(s) não encontrado(s): ${invalidMentions.join(', ')}`);
+        return;
+      }
+      
       onSubmit();
     }
   };
@@ -137,9 +165,15 @@ const MentionInput = ({
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className={className}
+        className={`${className} ${invalidMentions.length > 0 ? 'invalid-mentions' : ''}`}
         disabled={disabled}
       />
+      
+      {invalidMentions.length > 0 && (
+        <div className="mention-error">
+          Usuário(s) não encontrado(s): {invalidMentions.join(', ')}
+        </div>
+      )}
       
       {showSuggestions && (
         <div 
