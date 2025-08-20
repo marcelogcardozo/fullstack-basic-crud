@@ -15,7 +15,6 @@ const MentionInput = ({
   const [mentionStart, setMentionStart] = useState(-1);
   const [selectedSuggestion, setSelectedSuggestion] = useState(0);
   const [suggestionPosition, setSuggestionPosition] = useState({ top: 0, left: 0 });
-  const [invalidMentions, setInvalidMentions] = useState([]);
   const inputRef = useRef(null);
   
   useEffect(() => {
@@ -53,12 +52,7 @@ const MentionInput = ({
     const cursorPos = e.target.selectionStart;
     
     onChange(inputValue);
-    
-    // Check for invalid mentions in real time
-    const invalidMentionsList = validateMentions(inputValue);
-    setInvalidMentions(invalidMentionsList);
 
-    // Check for @ mentions
     const textBeforeCursor = inputValue.substring(0, cursorPos);
     const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
 
@@ -74,7 +68,6 @@ const MentionInput = ({
         setSuggestions(filteredUsers);
         setMentionStart(startPos);
         
-        // Calculate position for the suggestions dropdown
         const rect = inputRef.current.getBoundingClientRect();
         setSuggestionPosition({
           top: rect.bottom + window.scrollY,
@@ -100,7 +93,6 @@ const MentionInput = ({
     onChange(newValue);
     setShowSuggestions(false);
     
-    // Focus back to input
     setTimeout(() => {
       const newCursorPos = beforeMention.length + username.length + 2;
       inputRef.current.focus();
@@ -108,20 +100,6 @@ const MentionInput = ({
     }, 0);
   };
 
-  const validateMentions = (text) => {
-    const mentionRegex = /@(\w+)/g;
-    const mentions = [...text.matchAll(mentionRegex)];
-    const invalidMentions = [];
-    
-    mentions.forEach(match => {
-      const username = match[1];
-      if (!allUsers.includes(username)) {
-        invalidMentions.push(username);
-      }
-    });
-    
-    return invalidMentions;
-  };
 
   const handleKeyDown = (e) => {
     if (showSuggestions) {
@@ -143,14 +121,6 @@ const MentionInput = ({
       }
     } else if (e.key === 'Enter' && onSubmit) {
       e.preventDefault();
-      
-      // Validate mentions before submitting
-      const invalidMentions = validateMentions(value);
-      if (invalidMentions.length > 0) {
-        alert(`Usuário(s) não encontrado(s): ${invalidMentions.join(', ')}`);
-        return;
-      }
-      
       onSubmit();
     }
   };
@@ -165,15 +135,9 @@ const MentionInput = ({
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className={`${className} ${invalidMentions.length > 0 ? 'invalid-mentions' : ''}`}
+        className={className}
         disabled={disabled}
       />
-      
-      {invalidMentions.length > 0 && (
-        <div className="mention-error">
-          Usuário(s) não encontrado(s): {invalidMentions.join(', ')}
-        </div>
-      )}
       
       {showSuggestions && (
         <div 

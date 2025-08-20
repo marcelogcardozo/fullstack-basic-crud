@@ -22,7 +22,6 @@ const Dashboard = ({ username, onLogout }) => {
       const response = await postsAPI.getAllPosts();
       setPosts(response.data);
       
-      // Extract all users from posts and comments
       const users = new Set();
       response.data.forEach(post => {
         users.add(post.username);
@@ -35,7 +34,7 @@ const Dashboard = ({ username, onLogout }) => {
       setAllUsers(users);
     } catch (error) {
       console.error('Erro ao carregar posts:', error);
-      // Fallback para localStorage em caso de erro
+
       const savedPosts = localStorage.getItem('codeleap_posts');
       if (savedPosts) {
         const parsedPosts = JSON.parse(savedPosts);
@@ -47,7 +46,7 @@ const Dashboard = ({ username, onLogout }) => {
   useEffect(() => {
     localStorage.setItem('codeleap_posts', JSON.stringify(posts));
     
-    // Update users list when posts change
+
     const users = new Set();
     posts.forEach(post => {
       users.add(post.username);
@@ -70,7 +69,7 @@ const Dashboard = ({ username, onLogout }) => {
       setPosts([response.data, ...posts]);
     } catch (error) {
       console.error('Erro ao criar post:', error);
-      // Fallback para funcionamento local
+
       const post = {
         id: Date.now(),
         ...newPost,
@@ -91,7 +90,7 @@ const Dashboard = ({ username, onLogout }) => {
       setPosts(posts.filter(post => post.id !== id));
     } catch (error) {
       console.error('Erro ao deletar post:', error);
-      // Fallback para funcionamento local
+
       setPosts(posts.filter(post => post.id !== id));
     }
     setShowDeleteModal(false);
@@ -106,7 +105,7 @@ const Dashboard = ({ username, onLogout }) => {
       ));
     } catch (error) {
       console.error('Erro ao editar post:', error);
-      // Fallback para funcionamento local
+
       setPosts(posts.map(post => 
         post.id === updatedPost.id ? { ...post, ...updatedPost } : post
       ));
@@ -133,7 +132,7 @@ const Dashboard = ({ username, onLogout }) => {
       ));
     } catch (error) {
       console.error('Erro ao alterar like:', error);
-      // Fallback para funcionamento local
+
       setPosts(posts.map(post => {
         if (post.id === postId) {
           const hasLiked = post.likes && post.likes.includes(username);
@@ -160,11 +159,11 @@ const Dashboard = ({ username, onLogout }) => {
       };
       await postsAPI.addComment(postId, commentData);
       
-      // Reload the posts to get the updated comments
+
       loadPosts();
     } catch (error) {
       console.error('Erro ao adicionar comentário:', error);
-      // Fallback para funcionamento local
+
       setPosts(posts.map(post => {
         if (post.id === postId) {
           const newComment = {
@@ -190,11 +189,11 @@ const Dashboard = ({ username, onLogout }) => {
     try {
       await postsAPI.deleteComment(postId, commentId);
       
-      // Reload the posts to get the updated comments
+
       loadPosts();
     } catch (error) {
       console.error('Erro ao deletar comentário:', error);
-      // Fallback para funcionamento local
+
       setPosts(posts.map(post => {
         if (post.id === postId) {
           const newComments = (post.comments || []).filter(comment => comment.id !== commentId);
