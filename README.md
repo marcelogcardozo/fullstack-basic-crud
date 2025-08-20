@@ -2,6 +2,10 @@
 
 Sistema completo de CRUD (Create, Read, Update, Delete) para posts com frontend React e backend Django REST API, configurado como microsserviços no Railway.
 
+## 🌐 URLs para Teste
+- **Frontend:** https://codeleap-basic-crud-test.up.railway.app/main
+- **Backend:** https://codeleap-basic-crud-backend.up.railway.app/
+
 ## 🏗️ Arquitetura
 
 ```
