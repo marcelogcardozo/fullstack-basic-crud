@@ -22,13 +22,28 @@ API REST para gerenciamento de posts com comentários e likes, configurada como 
 
 ## 🔗 Endpoints da API
 
-Base URL: `https://seu-backend.railway.app/careers`
+Base URL: `https://seu-backend.railway.app`
 
-### Posts
+### Health Check
+
+#### Verificar status da API
+```bash
+curl -X GET http://localhost:8000/
+```
+
+**Resposta (200 OK):**
+```json
+{
+  "active": true,
+  "data_verificacao": "2025-08-20"
+}
+```
+
+### Posts - Base URL: `/careers/`
 
 #### Listar todos os posts
-```http
-GET /
+```bash
+curl -X GET http://localhost:8000/careers/
 ```
 
 **Resposta (200 OK):**
@@ -36,19 +51,19 @@ GET /
 [
   {
     "id": 1,
-    "username": "joao",
-    "title": "Meu primeiro post",
-    "content": "Conteúdo do post...",
-    "created_datetime": "2025-01-19T10:30:00Z",
-    "likes": ["maria", "pedro"],
+    "username": "maria_silva",
+    "created_datetime": "2025-08-20T10:30:00Z",
+    "title": "Como melhorar a produtividade no trabalho",
+    "content": "Compartilho aqui algumas estratégias que têm funcionado muito bem para mim...",
+    "likes": ["joao_santos", "ana_costa"],
     "likes_count": 2,
     "comments_count": 3,
     "comments": [
       {
         "id": 1,
-        "username": "maria",
-        "text": "Ótimo post!",
-        "created_datetime": "2025-01-19T11:00:00Z"
+        "username": "joao_santos",
+        "text": "Muito bom o post! Obrigado por compartilhar.",
+        "created_datetime": "2025-08-20T11:00:00Z"
       }
     ]
   }
@@ -56,25 +71,24 @@ GET /
 ```
 
 #### Criar novo post
-```http
-POST /
-Content-Type: application/json
-
-{
-  "username": "joao",
-  "title": "Título do post",
-  "content": "Conteúdo do post..."
-}
+```bash
+curl -X POST http://localhost:8000/careers/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "pedro_oliveira",
+    "title": "Dicas de programação para iniciantes",
+    "content": "Para quem está começando a programar, é importante focar nos fundamentos..."
+  }'
 ```
 
 **Resposta (201 Created):**
 ```json
 {
   "id": 2,
-  "username": "joao",
-  "title": "Título do post",
-  "content": "Conteúdo do post...",
-  "created_datetime": "2025-01-19T12:00:00Z",
+  "username": "pedro_oliveira",
+  "created_datetime": "2025-08-20T14:15:00Z",
+  "title": "Dicas de programação para iniciantes",
+  "content": "Para quem está começando a programar, é importante focar nos fundamentos...",
   "likes": [],
   "likes_count": 0,
   "comments_count": 0,
@@ -83,24 +97,23 @@ Content-Type: application/json
 ```
 
 #### Buscar post específico
-```http
-GET /{id}/
+```bash
+curl -X GET http://localhost:8000/careers/1/
 ```
 
 #### Atualizar post
-```http
-PATCH /{id}/
-Content-Type: application/json
-
-{
-  "title": "Novo título",
-  "content": "Novo conteúdo..."
-}
+```bash
+curl -X PATCH http://localhost:8000/careers/1/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Como melhorar MUITO a produtividade no trabalho",
+    "content": "Compartilho aqui algumas estratégias ATUALIZADAS que têm funcionado..."
+  }'
 ```
 
 #### Deletar post
-```http
-DELETE /{id}/
+```bash
+curl -X DELETE http://localhost:8000/careers/1/
 ```
 
 **Resposta (204 No Content)**
@@ -108,46 +121,79 @@ DELETE /{id}/
 ### Likes
 
 #### Toggle like/unlike
-```http
-POST /{id}/like/
-Content-Type: application/json
-
-{
-  "username": "maria"
-}
+```bash
+curl -X POST http://localhost:8000/careers/1/like/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "carlos_mendes"
+  }'
 ```
 
-**Resposta (200 OK):** Retorna o post atualizado
+**Resposta (200 OK):** Retorna o post atualizado com likes atualizados
 
 ### Comentários
 
 #### Adicionar comentário
-```http
-POST /{id}/comments/
-Content-Type: application/json
-
-{
-  "username": "pedro",
-  "text": "Excelente post!"
-}
+```bash
+curl -X POST http://localhost:8000/careers/1/comments/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "sofia_martins",
+    "text": "Excelente conteúdo, vou aplicar essas dicas!"
+  }'
 ```
 
 **Resposta (201 Created):**
 ```json
 {
-  "id": 2,
-  "username": "pedro",
-  "text": "Excelente post!",
-  "created_datetime": "2025-01-19T13:00:00Z"
+  "id": 4,
+  "username": "sofia_martins",
+  "text": "Excelente conteúdo, vou aplicar essas dicas!",
+  "created_datetime": "2025-08-20T15:45:00Z"
 }
 ```
 
 #### Deletar comentário
-```http
-DELETE /{id}/comments/{comment_id}/
+```bash
+curl -X DELETE http://localhost:8000/careers/1/comments/4/
 ```
 
 **Resposta (204 No Content)**
+
+## 📋 Códigos de Status HTTP
+
+- **200 OK**: Requisição bem-sucedida
+- **201 Created**: Recurso criado com sucesso
+- **204 No Content**: Recurso deletado com sucesso
+- **400 Bad Request**: Dados inválidos enviados
+- **404 Not Found**: Recurso não encontrado
+
+## 📊 Estrutura dos Dados
+
+### Post
+```json
+{
+  "id": "number",
+  "username": "string",
+  "created_datetime": "datetime",
+  "title": "string",
+  "content": "string",
+  "likes": ["array of usernames"],
+  "likes_count": "number",
+  "comments_count": "number",
+  "comments": ["array of comment objects"]
+}
+```
+
+### Comment
+```json
+{
+  "id": "number",
+  "username": "string",
+  "text": "string",
+  "created_datetime": "datetime"
+}
+```
 
 ## 🔧 Configuração Local
 
@@ -236,7 +282,7 @@ INFO 2025-01-19 10:30:00 [django.request] "GET /careers/ HTTP/1.1" 200
 ```
 
 ### Health Check
-Endpoint disponível em: `/admin/` (se habilitado)
+Endpoint disponível em: `/` - Verifica se a API está ativa
 
 ## 🔄 Versionamento
 
