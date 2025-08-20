@@ -227,6 +227,12 @@ INFO 2025-01-19 10:31:15 [posts.views] Post created: id=123
 - [ ] Busca e filtros
 - [ ] Paginação
 
+### 🐛 Bugs Conhecidos
+- [ ] **Sistema de menções**: Não é possível mencionar usuários com nomes compostos (mais de uma palavra)
+  - Problema: O sistema de detecção de @ só funciona com usernames sem espaços
+  - Impacto: Usuários com nomes como "João Silva" não podem ser mencionados corretamente
+  - Localização: `frontend/src/components/MentionInput.js`
+
 ### 🚀 Futuro
 - [ ] Notificações em tempo real
 - [ ] Sistema de tags
